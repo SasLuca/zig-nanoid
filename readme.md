@@ -61,16 +61,9 @@ pub fn main() !void
 
 Nano ID is quite comparable to UUID v4 (random-based).
 It has a similar number of random bits in the ID (126 in Nano ID and 122 in UUID), so it has a similar collision probability:
+It also uses a bigger alphabet, so a similar number of random bits are packed in just 21 symbols instead of 36.
 
 > For there to be a one in a billion chance of duplication, 103 trillion version 4 IDs must be generated.
-
-There are three main differences between Nano ID and UUID v4:
-
-1. Nano ID uses a bigger alphabet, so a similar number of random bits are packed in just 21 symbols instead of 36.
-
-2. Nano ID code is **4 times less** than `uuid/v4` package: 130 bytes instead of 483.
-
-3. Because of memory allocation tricks, Nano ID is **2 times** faster than UUID. (at least in the original JavaScript)
 
 ## How to use
 
