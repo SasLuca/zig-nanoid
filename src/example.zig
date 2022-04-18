@@ -10,6 +10,7 @@ pub fn main() !void
     // Initialize the rng and allocator
     var rng = std.rand.DefaultCsprng.init(seed); 
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ = gpa.deinit();
     
     // Generate a scoped nanoid
     const result = try nanoid.generateDefault(gpa.allocator(), rng.random());
