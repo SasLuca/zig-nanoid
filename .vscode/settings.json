@@ -1,0 +1,6 @@
+{
+    "[zig]": {
+        "editor.defaultFormatter": "tiehuis.zig",
+        "buildOnSave": true,
+    },
+}
