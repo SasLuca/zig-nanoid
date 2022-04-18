@@ -179,15 +179,13 @@ pub fn generateWithAlphabetToBuffer(rng: std.rand.Random, alphabet: []const u8, 
         return NanoidError.InvalidAlphabetSize;
     }
 
-    if (!(result_buffer.len > 0 and result_buffer.len <= default_id_len
-))
+    if (!(result_buffer.len > 0 and result_buffer.len <= default_id_len))
     {
         return NanoidError.InvalidResultBufferSize;
     }
 
     // This should be enough memory for any id of default size regardless of alphabet size
-    const sufficient_rng_step_size = comptime computeRngStepSize(computeMask(max_alphabet_len), default_id_len
-, max_alphabet_len);
+    const sufficient_rng_step_size = comptime computeRngStepSize(computeMask(max_alphabet_len), default_id_len, max_alphabet_len);
     var rng_step_buffer: [sufficient_rng_step_size]u8 = undefined;
 
     // Generate the id
@@ -208,14 +206,12 @@ pub fn generateWithAlphabet(allocator: std.mem.Allocator, rng: std.rand.Random, 
     }
 
     // This should be enough memory for any id of default size regardless of alphabet size
-    const sufficient_rng_step_size = comptime computeRngStepSize(computeMask(1), default_id_len
-, 1);
+    const sufficient_rng_step_size = comptime computeRngStepSize(computeMask(1), default_id_len, 1);
     var rng_step_buffer: [sufficient_rng_step_size]u8 = undefined;
 
 
     // Allocate result buffer
-    const result_buffer = try allocator.alloc(u8, default_id_len
-);
+    const result_buffer = try allocator.alloc(u8, default_id_len);
     errdefer allocator.free(result_buffer);
 
     // Generate the id
@@ -231,8 +227,7 @@ pub fn generateWithAlphabet(allocator: std.mem.Allocator, rng: std.rand.Random, 
 ///    The buffer size must be in the range (0, default_id_len]
 pub fn generateDefaultToBuffer(rng: std.rand.Random, result_buffer: []u8) NanoidError![]u8
 {
-    if (!(result_buffer.len > 0 and result_buffer.len <= default_id_len
-))
+    if (!(result_buffer.len > 0 and result_buffer.len <= default_id_len))
     {
         return NanoidError.InvalidResultBufferSize;
     }
@@ -252,8 +247,7 @@ pub fn generateDefault(allocator: std.mem.Allocator, rng: std.rand.Random) Error
 {
     var rng_step_buffer: [default_rng_step_buffer_len]u8 = undefined;
 
-    const result_buffer = try allocator.alloc(u8, default_id_len
-);
+    const result_buffer = try allocator.alloc(u8, default_id_len);
     errdefer allocator.free(result_buffer);
 
     const result = generateUnsafe(rng, default_alphabet, result_buffer, &rng_step_buffer);
@@ -427,8 +421,7 @@ test "generate flat distribution"
         const value_f = @intToFloat(f64, value);
         const alphabet_len_f = @intToFloat(f64, default_alphabet.len);
         const count_f = @intToFloat(f64, number_of_ids_to_generate);
-        const id_size_f = @intToFloat(f64, default_id_len
-    );
+        const id_size_f = @intToFloat(f64, default_id_len);
         const distribution = value_f * alphabet_len_f / (count_f * id_size_f);
         try std.testing.expect(testutils.toBeCloseTo(distribution, 1, 1));
     }
