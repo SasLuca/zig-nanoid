@@ -60,7 +60,9 @@ pub fn main() !void
 ## Comparison to UUID
 
 Nano ID is quite comparable to UUID v4 (random-based).
-It has a similar number of random bits in the ID (126 in Nano ID and 122 in UUID), so it has a similar collision probability:
+
+It has a similar number of random bits in the ID (126 in Nano ID and 122 in UUID), so it has a similar collision probability.
+
 It also uses a bigger alphabet, so a similar number of random bits are packed in just 21 symbols instead of 36.
 
 > For there to be a one in a billion chance of duplication, 103 trillion version 4 IDs must be generated.
