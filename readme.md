@@ -14,12 +14,43 @@ A tiny, secure, URL-friendly, unique string ID generator. Now available in pure 
 
 ## Example
 
+With default prng:
 ```zig
 pub fn main() !void
 {
+    // Init rng and allocator
     var rng = std.rand.DefaultPrng.init(0);
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    
+    // Generate nanoid
     const result = try generate(gpa.allocator(), rng.random());
+    defer gpa.allocator().free(result);
+    
+    // Print
+    std.log.info("Nanoid: {s}", .{result});
+}
+```
+
+With default csprng seeded properly:
+```zig
+const std = @import("std");
+const nanoid = @import("nanoid");
+
+pub fn main() !void
+{   
+    // Generate seed
+    var seed: [std.rand.DefaultCsprng.secret_seed_length]u8 = undefined;
+    std.crypto.random.bytes(&seed);
+
+    // Initialize rng and allocator
+    var rng = std.rand.DefaultCsprng.init(seed); 
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    
+    // Generate nanoid
+    const result = try nanoid.generateDefault(gpa.allocator(), rng.random());
+    defer gpa.allocator().free(result);
+
+    // Print it at the end
     std.log.info("Nanoid: {s}", .{result});
 }
 ```
