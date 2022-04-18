@@ -21,6 +21,7 @@ pub fn main() !void
     // Init rng and allocator
     var rng = std.rand.DefaultPrng.init(0);
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ = gpa.deinit();
     
     // Generate nanoid
     const result = try generate(gpa.allocator(), rng.random());
@@ -45,6 +46,7 @@ pub fn main() !void
     // Initialize rng and allocator
     var rng = std.rand.DefaultCsprng.init(seed); 
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ = gpa.deinit();
     
     // Generate nanoid
     const result = try nanoid.generateDefault(gpa.allocator(), rng.random());
