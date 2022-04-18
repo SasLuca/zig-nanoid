@@ -120,29 +120,6 @@ If you want a custom alphabet and size it is recommended that you create your ow
 
 In order to implement your own wrapper you can look at the implementation of `generateWithAlphabet` and `generateDefault`.
 
-## Adding as a dependency
-
-Simply download the project and add it to your project.
-
-Assuming you add it in a folder called `thirdparty` as example, in your `build.zig` you can then do the following to include the library:
-
-```zig
-const std = @import("std");
-const nanoid = @import("thirdparty/nanoid-zig/build.zig"); // Import the build.zig of the library
-
-pub fn build(b: *std.build.Builder) void 
-{
-    const target = b.standardTargetOptions(.{});
-    const mode = b.standardReleaseOptions();
-
-    const exe = b.addExecutable("zig-nanoid-test", "src/main.zig");
-    exe.setTarget(target);
-    exe.setBuildMode(mode);
-    exe.addPackage(nanoid.getPackage("nanoid")); // call getPackage and provide a name for it such as "nanoid"
-    exe.install();
-}
-```
-
 ## Useful links
 
 - Original implementation: https://github.com/ai/nanoid
