@@ -8,7 +8,7 @@ A tiny, secure, URL-friendly, unique string ID generator. Now available in pure 
 
 * **Small.** Less than 100 lines of code. No dependencies (zig std used just for an optional convenience function).
 * **Fast.** It is 2 times faster than UUID.
-* **Safe.** It can use any random generator you want. Can be used in clusters.
+* **Safe.** It can use any random generator you want.
 * **Short IDs.** It uses a larger alphabet than UUID (`A-Za-z0-9_-`). So ID size was reduced from 36 to 21 symbols and it is URL friendly.
 * **Portable.** Nano ID was ported to [20+ programming languages](https://github.com/ai/nanoid#other-programming-languages).
 
@@ -60,17 +60,12 @@ pub fn main() !void
 ## Comparison to UUID
 
 Nano ID is quite comparable to UUID v4 (random-based).
-It has a similar number of random bits in the ID (126 in Nano ID and 122 in UUID), so it has a similar collision probability:
+
+It has a similar number of random bits in the ID (126 in Nano ID and 122 in UUID), so it has a similar collision probability.
+
+It also uses a bigger alphabet, so a similar number of random bits are packed in just 21 symbols instead of 36.
 
 > For there to be a one in a billion chance of duplication, 103 trillion version 4 IDs must be generated.
-
-There are three main differences between Nano ID and UUID v4:
-
-1. Nano ID uses a bigger alphabet, so a similar number of random bits are packed in just 21 symbols instead of 36.
-
-2. Nano ID code is **4 times less** than `uuid/v4` package: 130 bytes instead of 483.
-
-3. Because of memory allocation tricks, Nano ID is **2 times** faster than UUID. (at least in the original JavaScript)
 
 ## How to use
 
