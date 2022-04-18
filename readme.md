@@ -8,7 +8,7 @@ A tiny, secure, URL-friendly, unique string ID generator. Now available in pure 
 
 * **Small.** Less than 100 lines of code. No dependencies (zig std used just for an optional convenience function).
 * **Fast.** It is 2 times faster than UUID.
-* **Safe.** It can use any random generator you want. Can be used in clusters.
+* **Safe.** It can use any random generator you want.
 * **Short IDs.** It uses a larger alphabet than UUID (`A-Za-z0-9_-`). So ID size was reduced from 36 to 21 symbols and it is URL friendly.
 * **Portable.** Nano ID was ported to [20+ programming languages](https://github.com/ai/nanoid#other-programming-languages).
 
