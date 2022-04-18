@@ -1,5 +1,7 @@
 # Nano ID in Zig
 
+[![License](https://img.shields.io/badge/license-MIT%20License-blue.svg)](https://github.com/SasLuca/nanoid-zig/edit/master/LICENSE)
+
 <img src="https://ai.github.io/nanoid/logo.svg" align="right" alt="Nano ID logo by Anton Lovchikov" width="180" height="94">
 
 A tiny, secure, URL-friendly, unique string ID generator. Now available in pure Zig.
