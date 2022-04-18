@@ -29,27 +29,27 @@ pub const NanoidError = error
 pub const Error = std.mem.Allocator.Error || NanoidError;
 
 /// Computes the mask necessary for the nanoid algorithm given an alphabet size.
-/// The mask is used to transform a random byte into an index into an array of size `alphabet_size`.
-pub fn computeMask(alphabet_size: u8) u8
+/// The mask is used to transform a random byte into an index into an array of size `alphabet_len`.
+pub fn computeMask(alphabet_len: u8) u8
 {
     if (std.debug.runtime_safety) 
     {
-        std.debug.assert(alphabet_size > 0);
+        std.debug.assert(alphabet_len > 0);
     }
 
-    const clz: u5 = @clz(u31, (alphabet_size - 1) | 1);
+    const clz: u5 = @clz(u31, (alphabet_len - 1) | 1);
     const mask = (@as(u32, 2) << (31 - clz)) - 1;
     const result = @truncate(u8, mask);
     return result;
 }
 
 /// Computes the size necessary for a buffer which can hold the random byte in a step of a the nanoid generation algorithm given a certain alphabet size.
-pub fn computeRngStepSize(mask: u8, id_size: usize, alphabet_size: u8) usize
+pub fn computeRngStepSize(mask: u8, id_size: usize, alphabet_len: u8) usize
 {
     if (std.debug.runtime_safety) 
     {
-        std.debug.assert(alphabet_size > 0);
-        std.debug.assert(mask == computeMask(alphabet_size));
+        std.debug.assert(alphabet_len > 0);
+        std.debug.assert(mask == computeMask(alphabet_len));
     }
 
     // @Note: 
@@ -62,7 +62,7 @@ pub fn computeRngStepSize(mask: u8, id_size: usize, alphabet_size: u8) usize
     // according to benchmarks)."
     const mask_f = @intToFloat(f64, mask);
     const id_size_f = @intToFloat(f64, id_size);
-    const alphabet_size_f = @intToFloat(f64, alphabet_size);
+    const alphabet_size_f = @intToFloat(f64, alphabet_len);
     const step_size = std.math.ceil(1.6 * mask_f * id_size_f / alphabet_size_f);
     const result = @floatToInt(usize, step_size);
     
@@ -277,24 +277,24 @@ const testutils = struct
 
 test "computeMask all acceptable input"
 {
-    var alphabet_size: u8 = 1;
-    while (alphabet_size < max_alphabet_len) : (alphabet_size += 1) 
+    var i: u9 = 1;
+    while (i <= max_alphabet_len) : (i += 1) 
     {
-        const mask = computeMask(alphabet_size);
+        const alphabet_len = @truncate(u8, i);
+        const mask = computeMask(alphabet_len);
         try std.testing.expect(mask > 0);
     }
 }
 
 test "computeRngStepSize all acceptable alphabet sizes and default id size"
 {
-    var alphabet_size: u8 = 1;
-    while (alphabet_size < max_alphabet_len) : (alphabet_size += 1) 
+    var i: u9 = 1;
+    while (i <= max_alphabet_len) : (i += 1)
     {
-        const mask = computeMask(alphabet_size);
-        const rng_step_size = computeRngStepSize(mask, default_id_len
-    , alphabet_size);
+        const alphabet_len = @truncate(u8, i);
+        const mask = computeMask(alphabet_len);
+        const rng_step_size = computeRngStepSize(mask, default_id_len, alphabet_len);
         try std.testing.expect(rng_step_size > 0);
-        try std.testing.expect(alphabet_size != max_alphabet_len);
     }
 }
 
