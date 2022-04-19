@@ -458,6 +458,52 @@ test "generate flat distribution"
     }
 }
 
+test "generate flat distribution for iterative rng"
+{
+    // Initialize the rng and allocator
+    var rng = testutils.makeDefaultCsprng();
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ = gpa.deinit();
+    
+    // Generate a nanoid
+    const number_of_ids_to_generate = 100 * 1000;
+
+    var characters_counts = std.AutoArrayHashMap(u8, usize).init(gpa.allocator());
+    defer characters_counts.deinit();
+ 
+    // Generate ids
+    var i: usize = 0;
+    while (i < number_of_ids_to_generate) : (i += 1)
+    {
+        var id_buffer: [default_id_len]u8 = undefined;
+        const id = generateWithIterativeRngUnsafe(rng.random(), default_alphabet, &id_buffer);
+
+        // Count the occurence of every character across all generated ids
+        for (id) |char|
+        {
+            var char_count = characters_counts.getPtr(char);
+            if (char_count) |c|
+            {
+                c.* += 1;
+            }
+            else 
+            {
+                try characters_counts.put(char, 0);
+            }
+        }
+    }
+
+    for (characters_counts.values()) |value|
+    {
+        const value_f = @intToFloat(f64, value);
+        const alphabet_len_f = @intToFloat(f64, default_alphabet.len);
+        const count_f = @intToFloat(f64, number_of_ids_to_generate);
+        const id_size_f = @intToFloat(f64, default_id_len);
+        const distribution = value_f * alphabet_len_f / (count_f * id_size_f);
+        try std.testing.expect(testutils.toBeCloseTo(distribution, 1, 1));
+    }
+}
+
 test "with constant seed to prng"
 {
     // Init rng and allocator 
