@@ -154,7 +154,7 @@ pub fn generateUnsafeIterative(rng: std.rand.Random, alphabet: []const u8, resul
 
     const mask = computeMask(alphabet.len);
 
-    while (result_buffer) |*it|
+    for (result_buffer) |*it|
     {
         const random_byte = rng.int(u8);
 
@@ -267,6 +267,23 @@ const testutils = struct
         return rng;
     }
 
+    fn makeDefaultPrngWithConstantSeed() std.rand.DefaultPrng
+    {
+        var rng = std.rand.DefaultPrng.init(0);
+        return rng;
+    }
+
+    fn makeDefaultCsprngWithConstantSeed() std.rand.DefaultCsprng
+    {
+        // Generate seed
+        var seed: [std.rand.DefaultCsprng.secret_seed_length]u8 = undefined;
+        for (seed) |*it| it.* = 'a';
+
+        // Initialize the rng and allocator
+        var rng = std.rand.DefaultCsprng.init(seed);
+        return rng;
+    }
+
     /// Taken from https://github.com/codeyu/nanoid-net/blob/445f4d363e0079e151ea414dab1a9f9961679e7e/test/Nanoid.Test/NanoidTest.cs#L145
     fn toBeCloseTo(actual: f64, expected: f64, precision: f64) bool
     {
@@ -308,8 +325,7 @@ test "generate default"
     const result = try generateDefault(gpa.allocator(), rng.random());
     defer gpa.allocator().free(result);
 
-    try std.testing.expect(result.len == default_id_len
-);
+    try std.testing.expect(result.len == default_id_len);
 }
 
 test "generate with custom size"
@@ -339,8 +355,7 @@ test "generate with custom alphabet"
     const custom_alphabet = "1234abcd";
     const result = try generateWithAlphabet(gpa.allocator(), rng.random(), custom_alphabet);
 
-    try std.testing.expect(result.len == default_id_len
-);
+    try std.testing.expect(result.len == default_id_len);
     
     for (result) |it|
     {
@@ -425,4 +440,32 @@ test "generate flat distribution"
         const distribution = value_f * alphabet_len_f / (count_f * id_size_f);
         try std.testing.expect(testutils.toBeCloseTo(distribution, 1, 1));
     }
+}
+
+test "with constant seed to prng"
+{
+    // Init rng and allocator 
+    var rng = testutils.makeDefaultPrngWithConstantSeed();
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ = gpa.deinit();
+    
+    // Generate a scoped nanoid
+    const result = try generateDefault(gpa.allocator(), rng.random());
+    defer gpa.allocator().free(result);
+
+    try std.testing.expectEqualStrings(result, "x9l5_XofdoYVaZ0J2ob30");
+}
+
+test "with constant seed to csprng"
+{
+    // Init rng and allocator 
+    var rng = testutils.makeDefaultCsprngWithConstantSeed();
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ = gpa.deinit();
+    
+    // Generate a scoped nanoid
+    const result = try generateDefault(gpa.allocator(), rng.random());
+    defer gpa.allocator().free(result);
+
+    try std.testing.expectEqualStrings(result, "WGAM32wiVYs19fgttw6lM");
 }
