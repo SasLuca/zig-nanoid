@@ -142,9 +142,9 @@ If you want to avoid passing an allocator for the result, you can just allocate 
 
 ### Low level API
 
-If you want a custom alphabet and size it is recommended that you create your own wrapper which does error checking and calls `generateUnsafe` or `generateUnsafeIterative`.
+If you want a custom alphabet and size it is recommended that you create your own wrapper which does error checking and calls `generateUnsafe` or `generateWithIterativeRngUnsafe`.
 
-`generateUnsafeIterative` is the same as `generateUnsafe` except it will use `Random.int(u8)` instead of `Random.bytes()` to get a random byte at a time thus avoiding the need for a rng step buffer. Normally this will be slower but depending on your rng algorithm it might not be so the option is there in case you need but normally it is recommended you use `generateUnsafe` which requires a temporary buffer that will be filled using `Random.bytes` in order to improve performance.
+`generateWithIterativeRngUnsafe` is the same as `generateUnsafe` except it will use `Random.int(u8)` instead of `Random.bytes()` to get a random byte at a time thus avoiding the need for a rng step buffer. Normally this will be slower but depending on your rng algorithm it might not be so the option is there in case you need but normally it is recommended you use `generateUnsafe` which requires a temporary buffer that will be filled using `Random.bytes` in order to improve performance.
 
 In order to implement your own wrapper you can look at the implementation of `generateWithAlphabet` and `generateDefault`.
 

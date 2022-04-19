@@ -12,7 +12,7 @@ pub fn build(b: *std.build.Builder) void
 
     if (example)
     {
-        const exe = b.addExecutable("nanoid-zig-example", "src/example.zig");
+        const exe = b.addExecutable("nanoid-zig-example", "examples/basic-default-csprng-example.zig");
         exe.setTarget(target);
         exe.setBuildMode(mode);
         exe.addPackage(getPackage("nanoid"));

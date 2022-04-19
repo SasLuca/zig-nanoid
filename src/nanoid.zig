@@ -144,7 +144,7 @@ pub fn generateUnsafe(rng: std.rand.Random, alphabet: []const u8, result_buffer:
 /// This function will use `rng.int` instead of `rng.bytes` thus avoiding the need for a step buffer.
 /// Depending on your choice of rng this can be useful, since you avoid the need for a step buffer, 
 /// but repeated calls to `rng.int` might be slower than a single call `rng.bytes`.
-pub fn generateUnsafeIterative(rng: std.rand.Random, alphabet: []const u8, result_buffer: []u8) []u8
+pub fn generateWithIterativeRngUnsafe(rng: std.rand.Random, alphabet: []const u8, result_buffer: []u8) []u8
 {
     if (std.debug.runtime_safety) 
     {
@@ -152,18 +152,34 @@ pub fn generateUnsafeIterative(rng: std.rand.Random, alphabet: []const u8, resul
         std.debug.assert(alphabet.len > 0 and alphabet.len <= max_alphabet_len);
     }
 
-    const mask = computeMask(alphabet.len);
+    const alphabet_len = @truncate(u8, alphabet.len);
+    const mask = computeMask(alphabet_len);
 
-    for (result_buffer) |*it|
+    var result_iter: usize = 0;
+    while (true)
     {
         const random_byte = rng.int(u8);
 
         const alphabet_index = random_byte & mask;
 
-        if (std.debug.runtime_safety) std.debug.assert(alphabet_index >= alphabet.len);
+        if (alphabet_index >= alphabet_len)
+        {
+            continue;
+        }
         
-        it.* = alphabet[alphabet_index];
+        result_buffer[result_iter] = alphabet[alphabet_index];
+
+        if (result_iter == result_buffer.len - 1)
+        {
+            return result_buffer;
+        }
+        else
+        {
+            result_iter += 1;
+        }
     }
+
+    return result_buffer;
 }
 
 /// Generates a nanoid using the provided alphabet inside `result_buffer` and returns it back to the caller.
@@ -224,10 +240,10 @@ pub fn generateWithAlphabet(allocator: std.mem.Allocator, rng: std.rand.Random, 
 /// - `rng` is a Random number generator. Provide a secure one such as std.rand.DefaultCsprng if you are concerned with security.
 /// - `alphabet` is an array of the bytes used to generate the id, its length must be in the range (0, max_alphabet_len]
 /// - `result_buffer` is a buffer that will be filled with random bytes thus generating the id.
-///    The buffer size must be in the range (0, default_id_len]
+///    The buffer size must be in the range [0, default_id_len]
 pub fn generateDefaultToBuffer(rng: std.rand.Random, result_buffer: []u8) NanoidError![]u8
 {
-    if (!(result_buffer.len > 0 and result_buffer.len <= default_id_len))
+    if (result_buffer.len > default_id_len)
     {
         return NanoidError.InvalidResultBufferSize;
     }
@@ -321,7 +337,7 @@ test "generate default"
     var rng = testutils.makeDefaultCsprng();
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     
-    // Generate a scoped nanoid
+    // Generate a nanoid
     const result = try generateDefault(gpa.allocator(), rng.random());
     defer gpa.allocator().free(result);
 
@@ -351,7 +367,7 @@ test "generate with custom alphabet"
     var rng = testutils.makeDefaultCsprng();
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     
-    // Generate a scoped nanoid
+    // Generate a nanoid
     const custom_alphabet = "1234abcd";
     const result = try generateWithAlphabet(gpa.allocator(), rng.random(), custom_alphabet);
 
@@ -368,7 +384,7 @@ test "generate with custom alphabet and size"
     // Initialize the rng and allocator
     var rng = testutils.makeDefaultCsprng();
     
-    // Generate a scoped nanoid
+    // Generate a nanoid
     const custom_alphabet = "1234abcd";
     const custom_id_size = 7;
     var result_buffer: [custom_id_size]u8 = undefined;
@@ -387,7 +403,7 @@ test "generate with single letter alphabet"
     // Initialize the rng and allocator
     var rng = testutils.makeDefaultCsprng();
     
-    // Generate a scoped nanoid
+    // Generate a nanoid
     const custom_alphabet = "a";
     const custom_id_size = 5;
     var result_buffer: [custom_id_size]u8 = undefined;
@@ -403,7 +419,7 @@ test "generate flat distribution"
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
     
-    // Generate a scoped nanoid
+    // Generate a nanoid
     const number_of_ids_to_generate = 100 * 1000;
 
     var characters_counts = std.AutoArrayHashMap(u8, usize).init(gpa.allocator());
@@ -449,7 +465,7 @@ test "with constant seed to prng"
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
     
-    // Generate a scoped nanoid
+    // Generate a nanoid
     const result = try generateDefault(gpa.allocator(), rng.random());
     defer gpa.allocator().free(result);
 
@@ -463,9 +479,33 @@ test "with constant seed to csprng"
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
     
-    // Generate a scoped nanoid
+    // Generate a nanoid
     const result = try generateDefault(gpa.allocator(), rng.random());
     defer gpa.allocator().free(result);
 
     try std.testing.expectEqualStrings(result, "WGAM32wiVYs19fgttw6lM");
+}
+
+test "with constant seed to prng iterative"
+{
+    // Init rng and allocator 
+    var rng = testutils.makeDefaultPrngWithConstantSeed();
+    
+    // Generate a nanoid
+    var result_buffer: [default_id_len]u8 = undefined;
+    const result = generateWithIterativeRngUnsafe(rng.random(), default_alphabet, &result_buffer);
+
+    try std.testing.expectEqualStrings(result, "5ookuCml5jZyphCDT0R4s");
+}
+
+test "with constant seed to csprng iterative"
+{
+    // Init rng and allocator 
+    var rng = testutils.makeDefaultCsprngWithConstantSeed();
+    
+    // Generate a nanoid
+    var result_buffer: [default_id_len]u8 = undefined;
+    const result = generateWithIterativeRngUnsafe(rng.random(), default_alphabet, &result_buffer);
+
+    try std.testing.expectEqualStrings(result, "WOo_Gi5-2dtC__isbnp67");
 }
