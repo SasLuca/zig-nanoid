@@ -240,10 +240,10 @@ pub fn generateWithAlphabet(allocator: std.mem.Allocator, rng: std.rand.Random, 
 /// - `rng` is a Random number generator. Provide a secure one such as std.rand.DefaultCsprng if you are concerned with security.
 /// - `alphabet` is an array of the bytes used to generate the id, its length must be in the range (0, max_alphabet_len]
 /// - `result_buffer` is a buffer that will be filled with random bytes thus generating the id.
-///    The buffer size must be in the range [0, default_id_len]
+///    The buffer size must be in the range (0, default_id_len]
 pub fn generateDefaultToBuffer(rng: std.rand.Random, result_buffer: []u8) NanoidError![]u8
 {
-    if (result_buffer.len > default_id_len)
+    if (result_buffer.len == 0 or result_buffer.len > default_id_len)
     {
         return NanoidError.InvalidResultBufferSize;
     }

@@ -8,7 +8,7 @@ pub fn main() !void
     std.crypto.random.bytes(&seed);
 
     // Initialize the rng and allocator
-    var rng = std.rand.DefaultCsprng.init(seed); 
+    var rng = std.rand.DefaultCsprng.init(seed);
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
     
