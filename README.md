@@ -19,6 +19,9 @@ A A battle-tested, tiny, secure, URL-friendly, unique string ID generator. Now a
 
 With default prng seeded with a constant number:
 ```zig
+const std = @import("std");
+const nanoid = @import("nanoid");
+
 pub fn main() !void
 {
     // Init rng and allocator
