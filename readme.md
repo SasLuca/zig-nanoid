@@ -6,12 +6,13 @@
 
 <img src="https://ai.github.io/nanoid/logo.svg" align="right" alt="Nano ID logo by Anton Lovchikov" width="180" height="94">
 
-A tiny, secure, URL-friendly, unique string ID generator. Now available in pure Zig.
+A A battle-tested, tiny, secure, URL-friendly, unique string ID generator. Now available in pure Zig.
 
 * **Freehosted.** zig-nanoid is entirely freehosted.
 * **Fast.** It is 2 times faster than UUID.
 * **Safe.** It can use any random generator you want.
 * **Short IDs.** It uses a larger alphabet than UUID (`A-Za-z0-9_-`). So ID length was reduced from 36 to 21 symbols and it is URL friendly.
+* **Battle Tested.** Original implementation has over 18_264_279 million weekly downloads on [npm](https://www.npmjs.com/package/nanoid).
 * **Portable.** Nano ID was ported to [20+ programming languages](https://github.com/ai/nanoid#other-programming-languages).
 
 ## Example
