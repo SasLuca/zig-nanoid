@@ -7,12 +7,22 @@ pub fn build(b: *std.build.Builder) void
     
     const test_step = b.step("test", "Run unit tests directly.");
     
-    const example = b.option(bool, "example", "A simple example of using nanoid.") orelse false;
+    const default_example = b.option(bool, "default_example", "A simple example of using nanoid.") orelse false;
+    const custom_alphabet_example = b.option(bool, "custom_alphabet_example", "A simple example of using nanoid.") orelse false;
     const tests = b.option(bool, "tests", "The unit tests of the library.") orelse false;
-
-    if (example)
+    
+    if (default_example)
     {
-        const exe = b.addExecutable("nanoid-zig-example", "examples/basic-default-csprng-example.zig");
+        const exe = b.addExecutable("nanoid-zig-default-example", "examples/default-example.zig");
+        exe.setTarget(target);
+        exe.setBuildMode(mode);
+        exe.addPackage(getPackage("nanoid"));
+        exe.install();
+    }
+
+    if (custom_alphabet_example)
+    {
+        const exe = b.addExecutable("nanoid-zig-custom-alphabet-example", "examples/custom-alphabet-example.zig");
         exe.setTarget(target);
         exe.setBuildMode(mode);
         exe.addPackage(getPackage("nanoid"));

@@ -2,15 +2,26 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Run example",
+            "name": "Run default example",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/zig-out/bin/nanoid-zig-example.exe",
+            "program": "${workspaceFolder}/zig-out/bin/nanoid-zig-default-example.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "preLaunchTask": "install example"
+            "preLaunchTask": "install default_example"
+        },
+        {
+            "name": "Run custom alphabet example",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/zig-out/bin/nanoid-zig-custom-alphabet-example.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "preLaunchTask": "install custom_alphabet_example"
         },
         {
             "name": "Run tests",

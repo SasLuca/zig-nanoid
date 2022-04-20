@@ -2,16 +2,16 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "install example",
+            "label": "install default_example",
             "type": "shell",
-            "command": "zig build install -Dexample",
+            "command": "zig build install -Ddefault_example",
             "group": "build",
             "problemMatcher": [ "$gcc" ]
         },
         {
-            "label": "uninstall example",
+            "label": "install custom_alphabet_example",
             "type": "shell",
-            "command": "zig build uninstall -Dexample",
+            "command": "zig build install -Dcustom_alphabet_example",
             "group": "build",
             "problemMatcher": [ "$gcc" ]
         },
@@ -22,12 +22,5 @@
             "group": "build",
             "problemMatcher": [ "$gcc" ]
         },
-        {
-            "label": "uninstall tests",
-            "type": "shell",
-            "command": "zig build install -Dtests",
-            "group": "build",
-            "problemMatcher": [ "$gcc" ]
-        }
     ]
 }
