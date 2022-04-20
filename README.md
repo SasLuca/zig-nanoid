@@ -4,7 +4,7 @@
 [![cross build tests](https://github.com/SasLuca/zig-nanoid/actions/workflows/cross-build.yml/badge.svg)](https://github.com/SasLuca/zig-nanoid/actions/workflows/cross-build.yml)
 ![Maintenance intention for this crate](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)
 
-<img src="https://github.com/SasLuca/nanoid-zig/logo.svg" align="right" alt="Nano ID logo by Anton Lovchikov" width="180" height="94">
+<img src="https://raw.githubusercontent.com/SasLuca/zig-nanoid/main/logo.svg" align="right" alt="Nano ID x Zig logo by Anton Lovchikov, adapted by Luca Sas" width="180" height="94">
 
 A A battle-tested, tiny, secure, URL-friendly, unique string ID generator. Now available in pure Zig.
 
