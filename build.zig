@@ -6,6 +6,7 @@ pub fn build(b: *std.build.Builder) void
     const mode = b.standardReleaseOptions();
     
     const test_step = b.step("test", "Run unit tests directly.");
+    const run_step = b.step("run", "Run example.");
     
     const default_example = b.option(bool, "default_example", "A simple example of using nanoid.") orelse false;
     const custom_alphabet_example = b.option(bool, "custom_alphabet_example", "A simple example of using nanoid.") orelse false;
@@ -18,6 +19,10 @@ pub fn build(b: *std.build.Builder) void
         exe.setBuildMode(mode);
         exe.addPackage(getPackage("nanoid"));
         exe.install();
+        
+        const exe_run = exe.run();
+        exe_run.step.dependOn(b.getInstallStep());
+        run_step.dependOn(&exe_run.step);
     }
 
     if (custom_alphabet_example)
@@ -27,6 +32,10 @@ pub fn build(b: *std.build.Builder) void
         exe.setBuildMode(mode);
         exe.addPackage(getPackage("nanoid"));
         exe.install();
+        
+        const exe_run = exe.run();
+        exe_run.step.dependOn(b.getInstallStep());
+        run_step.dependOn(&exe_run.step);
     }
 
     if (tests)
@@ -35,6 +44,10 @@ pub fn build(b: *std.build.Builder) void
         exe.setTarget(target);
         exe.setBuildMode(mode);
         exe.install();
+        
+        const exe_run = exe.run();
+        exe_run.step.dependOn(b.getInstallStep());
+        run_step.dependOn(&exe_run.step);
     }
 
     // Test runner

@@ -28,3 +28,5 @@ jobs:
       - name: Run the test suite
         run: |
           zig build test
+          zig build -Ddefault_example
+          zig build -Dcustom_alphabet_example

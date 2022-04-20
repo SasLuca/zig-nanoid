@@ -12,7 +12,7 @@ pub fn main() !void
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
     
-    // Generate a scoped nanoid
+    // Generate a nanoid
     const result = try nanoid.generateDefault(gpa.allocator(), rng.random());
     defer gpa.allocator().free(result);
 
