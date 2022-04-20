@@ -104,17 +104,6 @@ The default alphabet includes the symbols "-_", numbers and English lowercase an
 
 You can find a variety of other useful alphabets inside of `nanoid.alphabets`.
 
-### Regarding RNGs
-
-You will need to provide an random number generator (rng) yourself. You can use the zig standard library ones, either `std.rand.DefaultPrng`
-or if you have stricter security requirements use `std.rand.DefaultCsprng`.
-
-When you initialize them you need to provide a seed, providing the same one every time will result in the same ids being generated every 
-time you run the program.
-
-If you want a good secure seed you can generate one using `std.crypto.random.bytes`. Refer to the examples at the start of this readme for 
-usage.
-
 ### Generating an id with a custom size
 
 If you want a custom alphabet and length use `generateEx` or `generateExWithIterativeRng`.
@@ -133,6 +122,17 @@ Additionally you can precompute a sufficient length for the `step_buffer` and pr
 `computeSufficientRngStepBufferLengthFor` which simply asks for the largest possible id length you want to generate.
 
 If you intend to use the `default_id_len`, you can use the constant `nanoid.rng_step_buffer_len_sufficient_for_default_length_ids`.
+
+### Regarding RNGs
+
+You will need to provide an random number generator (rng) yourself. You can use the zig standard library ones, either `std.rand.DefaultPrng`
+or if you have stricter security requirements use `std.rand.DefaultCsprng`.
+
+When you initialize them you need to provide a seed, providing the same one every time will result in the same ids being generated every 
+time you run the program.
+
+If you want a good secure seed you can generate one using `std.crypto.random.bytes`. Refer to the examples at the start of this readme for 
+usage.
 
 ### Build steps
 
