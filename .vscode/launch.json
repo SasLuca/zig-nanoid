@@ -10,7 +10,15 @@
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "preLaunchTask": "install default_example"
+            "preLaunchTask": "install default_example",
+            "logging": {
+                "exceptions": true,
+                "moduleLoad": false,
+                "programOutput": true,
+                "engineLogging": false,
+                "trace": false,
+                "traceResponse": false,
+            }
         },
         {
             "name": "Run custom alphabet example",
@@ -21,7 +29,15 @@
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "preLaunchTask": "install custom_alphabet_example"
+            "preLaunchTask": "install custom_alphabet_example",
+            "logging": {
+                "exceptions": true,
+                "moduleLoad": false,
+                "programOutput": true,
+                "engineLogging": false,
+                "trace": false,
+                "traceResponse": false,
+            }
         },
         {
             "name": "Run tests",
@@ -32,7 +48,15 @@
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "preLaunchTask": "install tests"
+            "preLaunchTask": "install tests",
+            "logging": {
+                "exceptions": true,
+                "moduleLoad": false,
+                "programOutput": true,
+                "engineLogging": false,
+                "trace": false,
+                "traceResponse": false,
+            }
         }
     ]
 }
