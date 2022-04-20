@@ -160,4 +160,4 @@ pub fn build(b: *std.build.Builder) void
 
 - Original implementation: https://github.com/ai/nanoid
 
-- Online tool: https://gitpod.io/#https://github.com/ai/nanoid/
+- Online Tool: https://zelark.github.io/nano-id-cc/
