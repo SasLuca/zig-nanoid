@@ -97,7 +97,7 @@ pub fn computeRngStepBufferLength(id_len: usize, alphabet_len: u8) usize
 /// - `max_id_len`: The biggest id length for which the step buffer length needs to be sufficient.
 pub fn computeSufficientRngStepBufferLengthFor(max_id_len: usize) usize
 {
-    @setEvalBranchQuota(3000);
+    @setEvalBranchQuota(2500);
     var max_step_buffer_len: usize = 0;
     var i: u9 = 1;
     while (i <= max_alphabet_len) : (i += 1)
