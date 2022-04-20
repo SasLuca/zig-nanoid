@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths: 
       - "*.zig"
+      - "src/*.zig"
+      - "examples/*.zig"
       - ".github/workflows/cross-build.yml"
   pull_request:
     branches: [main]
