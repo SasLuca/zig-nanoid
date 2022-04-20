@@ -3,7 +3,9 @@ name: Build
 on:
   push:
     branches: [main]
-    paths: "*.zig"
+    paths: 
+      - "*.zig"
+      - ".github/workflows/cross-build.yml"
   pull_request:
     branches: [main]
   schedule:
@@ -25,7 +27,7 @@ jobs:
         with:
           version: master
 
-      - name: Run the test suite
+      - name: Run the test suite and examples
         run: |
           zig build test
           zig build -Ddefault_example
