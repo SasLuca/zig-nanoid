@@ -1,12 +1,14 @@
 # Nano ID in Zig
 
-[![License](https://img.shields.io/badge/license-MIT%20License-blue.svg)](https://github.com/SasLuca/nanoid-zig/edit/master/LICENSE)
+[![License](https://img.shields.io/badge/license-MIT%20License-blue.svg)](https://github.com/SasLuca/nanoid-zig/master/LICENSE)
+[![cross build tests](https://github.com/SasLuca/zig-nanoid/actions/workflows/cross-build.yml/badge.svg)](https://github.com/SasLuca/zig-nanoid/actions/workflows/cross-build.yml)
+![Maintenance intention for this crate](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)
 
 <img src="https://ai.github.io/nanoid/logo.svg" align="right" alt="Nano ID logo by Anton Lovchikov" width="180" height="94">
 
 A tiny, secure, URL-friendly, unique string ID generator. Now available in pure Zig.
 
-* **Small.** Less than 100 lines of code. No dependencies (zig std used just for an optional convenience function).
+* **Freehosted.** zig-nanoid is entirely freehosted.
 * **Fast.** It is 2 times faster than UUID.
 * **Safe.** It can use any random generator you want.
 * **Short IDs.** It uses a larger alphabet than UUID (`A-Za-z0-9_-`). So ID length was reduced from 36 to 21 symbols and it is URL friendly.
