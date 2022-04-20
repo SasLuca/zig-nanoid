@@ -32,6 +32,7 @@ pub const alphabets = struct
     pub const default = "_-" ++ alphanumeric;
 };
 
+// An array of all the alphabets.
 pub const all_alphabets = InternalUtils.collectAllConstantsInStruct(alphabets, []const u8);
 
 /// The default length of the generated id.
@@ -40,8 +41,8 @@ pub const default_id_len = 21;
 /// The computed mask for the default alphabet length.
 pub const default_mask = computeMask(alphabets.default.len);
 
-/// This should be enough memory for any id of default length regardless of alphabet length
-pub const default_rng_step_buffer_len = computeRngStepBufferLength(computeMask(65), default_id_len, 65);
+/// This should be enough memory for a step buffer when generating an id of default length regardless of alphabet length.
+pub const sufficient_rng_step_buffer_len = computeRngStepBufferLength(computeMask(65), default_id_len, 65);
 
 /// The maximum length of the alphabet accepted by the nanoid algorithm.
 pub const max_alphabet_len: u8 = 255;
@@ -232,7 +233,7 @@ pub fn generateWithAlphabetToBuffer(rng: std.rand.Random, alphabet: []const u8, 
     }
 
     
-    var rng_step_buffer: [default_rng_step_buffer_len]u8 = undefined;
+    var rng_step_buffer: [sufficient_rng_step_buffer_len]u8 = undefined;
 
     // Generate the id
     const result = generateUnsafe(rng, alphabet, result_buffer, &rng_step_buffer);
@@ -252,7 +253,7 @@ pub fn generateWithAlphabet(allocator: std.mem.Allocator, rng: std.rand.Random, 
     }
 
     // This should be enough memory for any id of default length regardless of alphabet length
-    var rng_step_buffer: [default_rng_step_buffer_len]u8 = undefined;
+    var rng_step_buffer: [sufficient_rng_step_buffer_len]u8 = undefined;
 
 
     // Allocate result buffer
@@ -277,7 +278,7 @@ pub fn generateDefaultToBuffer(rng: std.rand.Random, result_buffer: []u8) Nanoid
         return NanoidError.InvalidResultBufferSize;
     }
 
-    var rng_step_buffer: [default_rng_step_buffer_len]u8 = undefined;
+    var rng_step_buffer: [sufficient_rng_step_buffer_len]u8 = undefined;
 
     const result = generateUnsafe(rng, alphabets.default, result_buffer, &rng_step_buffer);
     return result;
@@ -290,7 +291,7 @@ pub fn generateDefaultToBuffer(rng: std.rand.Random, result_buffer: []u8) Nanoid
 /// - `alphabet` is an array of the bytes used to generate the id, its length must be in the range (0, max_alphabet_len]
 pub fn generateDefault(allocator: std.mem.Allocator, rng: std.rand.Random) Error![]u8
 {
-    var rng_step_buffer: [default_rng_step_buffer_len]u8 = undefined;
+    var rng_step_buffer: [sufficient_rng_step_buffer_len]u8 = undefined;
 
     const result_buffer = try allocator.alloc(u8, default_id_len);
     errdefer allocator.free(result_buffer);
@@ -299,6 +300,7 @@ pub fn generateDefault(allocator: std.mem.Allocator, rng: std.rand.Random) Error
     return result;
 }
 
+/// Non public utility functions used mostly in unit tests.
 const InternalUtils = struct 
 {
     fn makeDefaultCsprng() std.rand.DefaultCsprng 
@@ -336,6 +338,7 @@ const InternalUtils = struct
         return pass;
     }
 
+    /// Checks if all elements in `array` are present in `includedIn`.
     fn allIn(comptime T: type, array: []T, includedIn: []const T) bool 
     {
         for (array) |it|
@@ -349,6 +352,7 @@ const InternalUtils = struct
         return true;
     }
 
+    /// Returns an array with all the public constants from a struct.
     fn collectAllConstantsInStruct(comptime namespace: type, comptime T: type) []const T 
     {
         var result: []const T = &.{};
