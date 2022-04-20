@@ -18,3 +18,6 @@ zig-out/
 /build/
 /build-*/
 /docgen_tmp/
+
+# Custom
+.vscode/settings.json
