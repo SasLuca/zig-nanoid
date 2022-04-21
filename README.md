@@ -6,7 +6,7 @@
 
 <img src="https://raw.githubusercontent.com/SasLuca/zig-nanoid/main/logo.svg" align="right" alt="Nano ID x Zig logo by Anton Lovchikov, adapted by Luca Sas" width="180" height="94">
 
-A A battle-tested, tiny, secure, URL-friendly, unique string ID generator. Now available in pure Zig.
+A battle-tested, tiny, secure, URL-friendly, unique string ID generator. Now available in pure Zig.
 
 * **Freehosted.** zig-nanoid is entirely freehosted.
 * **Fast.** It is 2 times faster than UUID.
