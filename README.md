@@ -10,7 +10,7 @@ A A battle-tested, tiny, secure, URL-friendly, unique string ID generator. Now a
 
 * **Freehosted.** zig-nanoid is entirely freehosted.
 * **Fast.** It is 2 times faster than UUID.
-* **Safe.** It can use any random generator you want.
+* **Safe.** It can use any random generator you want and the library has no errors to handle.
 * **Short IDs.** It uses a larger alphabet than UUID (`A-Za-z0-9_-`). So ID length was reduced from 36 to 21 symbols and it is URL friendly.
 * **Battle Tested.** Original implementation has over 18_264_279 million weekly downloads on [npm](https://www.npmjs.com/package/nanoid).
 * **Portable.** Nano ID was ported to [20+ programming languages](https://github.com/ai/nanoid#other-programming-languages).
@@ -88,7 +88,7 @@ If you want to avoid the allocation, you can use `generateDefaultToBuffer`.
 
 ```zig
 var buffer: [nanoid.default_id_len]u8 = undefined;
-const result = try nanoid.generateDefaultToBuffer(random, &buffer);
+const result = nanoid.generateDefaultToBuffer(random, &buffer);
 ```
 
 ### Generating an id with a custom alphabet
@@ -97,7 +97,7 @@ To generate an id with the default length and a custom alphabet you can use `gen
 
 ```zig
 // This will generate that contains just numbers
-const result = try nanoid.generateWithAlphabet(allocator, random, nanoid.alphabets.numbers);
+const result = nanoid.generateWithAlphabet(allocator, random, nanoid.alphabets.numbers);
 ```
 
 If you want to avoid passing an allocator for the result, you can just allocate a buffer with at least `default_id_len` bytes and pass it 
@@ -147,7 +147,7 @@ To add the library as a package to your zig project:
 Full example:
 ```zig
 const std = @import("std");
-const nanoid = @import("thirdparty/nanoid-zig/build.zig");
+const nanoid = @import("thirdparty/zig-nanoid/build.zig");
 
 pub fn build(b: *std.build.Builder) void 
 {

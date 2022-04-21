@@ -59,12 +59,9 @@ pub fn build(b: *std.build.Builder) void
 
 pub fn getPackage(name: []const u8) std.build.Pkg
 {
-    // This gives us the absolute path of our index file
-    const path = comptime std.fs.path.dirname(@src().file).? ++ "/src/nanoid.zig";
-    
     return std.build.Pkg{
         .name = name,
-        .path = .{ .path = path },
+        .path = .{ .path = std.fs.path.dirname(@src().file).? ++ "/src/nanoid.zig" },
         .dependencies = null, // null by default, but can be set to a slice of `std.build.Pkg`s that your package depends on.
     };
 }
