@@ -8,7 +8,7 @@
 
 A battle-tested, tiny, secure, URL-friendly, unique string ID generator. Now available in pure Zig.
 
-* **Freehosted.** zig-nanoid is entirely freehosted.
+* **Freestanding.** zig-nanoid is entirely freestanding.
 * **Fast.** It is 2 times faster than UUID.
 * **Safe.** It can use any random generator you want and the library has no errors to handle.
 * **Short IDs.** It uses a larger alphabet than UUID (`A-Za-z0-9_-`). So ID length was reduced from 36 to 21 symbols and it is URL friendly.
@@ -141,7 +141,7 @@ usage.
 
 ### Using the gyro package manager
 
-We support the zig (gyro package manager)[https://github.com/mattnite/gyro].
+We support the zig [gyro package manager](https://github.com/mattnite/gyro).
 Here is how to use it:
 
 1. From your terminal initialize a gyro project and add the package `SasLuca/nanoid`.
