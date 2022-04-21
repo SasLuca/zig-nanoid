@@ -10,3 +10,4 @@ zig-out/
 
 # Custom
 .vscode/settings.json
+.gyro
