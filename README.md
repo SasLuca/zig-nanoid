@@ -137,7 +137,26 @@ time you run the program.
 If you want a good secure seed you can generate one using `std.crypto.random.bytes`. Refer to the examples at the start of this readme for 
 usage.
 
-### Build steps
+## Add zig-nanoid to your project
+
+### Using the gyro package manager
+
+We support the zig (gyro package manager)[https://github.com/mattnite/gyro].
+Here is how to use it:
+
+1. From your terminal initialize a gyro project and add the package `SasLuca/nanoid`.
+    ```
+    gyro init
+    gyro add SasLuca/nanoid
+    ```
+
+2. In your `build.zig` do an import like so `const pkgs = @import("deps.zig").pkgs;` and call `pkgs.addAllTo(exe);` to add all libraries to your executable (or some other target).
+
+3. Import `const nanoid = @import("nanoid");` in your `main.zig` and use it.
+
+4. Invoke `gyro build run` which will generate `deps.zig` and other files as well as building and running your project.
+
+### Manually
 
 To add the library as a package to your zig project:
 1. Download the repo and put it in a folder (eg: `thirdparty`) in your project.
