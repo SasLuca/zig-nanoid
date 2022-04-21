@@ -141,7 +141,7 @@ usage.
 
 ### Using the gyro package manager
 
-We support the zig (gyro package manager)[https://github.com/mattnite/gyro].
+We support the zig [gyro package manager](https://github.com/mattnite/gyro).
 Here is how to use it:
 
 1. From your terminal initialize a gyro project and add the package `SasLuca/nanoid`.
