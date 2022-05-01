@@ -84,7 +84,7 @@ pub fn computeRngStepBufferLength(id_len: usize, alphabet_len: u8) usize
     const mask_f = @intToFloat(f64, computeMask(alphabet_len));
     const id_len_f = @intToFloat(f64, id_len);
     const alphabet_size_f = @intToFloat(f64, alphabet_len);
-    const step_buffer_len = std.math.ceil(1.6 * mask_f * id_len_f / alphabet_size_f);
+    const step_buffer_len = @ceil(1.6 * mask_f * id_len_f / alphabet_size_f);
     const result = @floatToInt(usize, step_buffer_len);
     
     return result;
