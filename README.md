@@ -9,7 +9,7 @@
 A battle-tested, tiny, secure, URL-friendly, unique string ID generator. Now available in pure Zig.
 
 * **Freestanding.** zig-nanoid is entirely freestanding.
-* **Fast.** It is 2 times faster than UUID.
+* **Fast.** The algorithm is very fast and relies just on basic math, speed will mostly depend on your choice of RNG.
 * **Safe.** It can use any random generator you want and the library has no errors to handle.
 * **Short IDs.** It uses a larger alphabet than UUID (`A-Za-z0-9_-`). So ID length was reduced from 36 to 21 symbols and it is URL friendly.
 * **Battle Tested.** Original implementation has over 18_264_279 million weekly downloads on [npm](https://www.npmjs.com/package/nanoid).
@@ -17,48 +17,15 @@ A battle-tested, tiny, secure, URL-friendly, unique string ID generator. Now ava
 
 ## Example
 
-With default prng seeded with a constant number:
-```zig
-const std = @import("std");
-const nanoid = @import("nanoid");
-
-pub fn main() !void
-{
-    // Init rng and allocator
-    var rng = std.rand.DefaultPrng.init(0);
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    defer _ = gpa.deinit();
-    
-    // Generate nanoid
-    const result = try generate(gpa.allocator(), rng.random());
-    defer gpa.allocator().free(result);
-    
-    // Print
-    std.log.info("Nanoid: {s}", .{result});
-}
-```
-
-With default csprng seeded properly:
+Basic usage with `std.crypto.random`:
 ```zig
 const std = @import("std");
 const nanoid = @import("nanoid");
 
 pub fn main() !void
 {   
-    // Generate seed
-    var seed: [std.rand.DefaultCsprng.secret_seed_length]u8 = undefined;
-    std.crypto.random.bytes(&seed);
+    const result = nanoid.generate(std.crypto.random);
 
-    // Initialize rng and allocator
-    var rng = std.rand.DefaultCsprng.init(seed); 
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    defer _ = gpa.deinit();
-    
-    // Generate nanoid
-    const result = try nanoid.generateDefault(gpa.allocator(), rng.random());
-    defer gpa.allocator().free(result);
-
-    // Print it at the end
     std.log.info("Nanoid: {s}", .{result});
 }
 ```
@@ -75,37 +42,25 @@ For there to be a one in a billion chance of duplication, 103 trillion version 4
 
 ## How to use
 
-### Generating an id with the default settings
+### Generating an id with the default size
 
-The simplest way to generate an id with the default alphabet and length is by using the function `generateDefault` like so:
-
-```zig
-const result = try nanoid.generateDefault(allocator, random);
-defer allocator.free(result);
-```
-
-If you want to avoid the allocation, you can use `generateDefaultToBuffer`.
+The simplest way to generate an id with the default alphabet and length is by using the function `generate` like so:
 
 ```zig
-var buffer: [nanoid.default_id_len]u8 = undefined;
-const result = nanoid.generateDefaultToBuffer(random, &buffer);
+const result = nanoid.generate(std.crypto.random);
 ```
 
-### Generating an id with a custom alphabet
-
-To generate an id with the default length and a custom alphabet you can use `generateWithAlphabet` like so:
-
+If you want a custom alphabet you can use `generateWithAlphabet` and pass either a custom alphabet or one from `nanoid.alphabets`:
 ```zig
-// This will generate that contains just numbers
-const result = nanoid.generateWithAlphabet(allocator, random, nanoid.alphabets.numbers);
+const result = nanoid.generateWithAlphabet(std.crypto.random, nanoid.alphabets.numbers); // This id will only contain numbers
 ```
-
-If you want to avoid passing an allocator for the result, you can just allocate a buffer with at least `default_id_len` bytes and pass it 
-to `generateDefaultToBuffer` or `generateWithAlphabetToBuffer`. 
-
-The default alphabet includes the symbols "-_", numbers and English lowercase and uppercase letters.
 
 You can find a variety of other useful alphabets inside of `nanoid.alphabets`.
+
+The result is an array of size `default_id_len` which happens to be 21 which is returned by value.
+
+There are no errors to handle, assuming your rng object is valid everything will work.
+The default alphabet includes the symbols "-_", numbers and English lowercase and uppercase letters.
 
 ### Generating an id with a custom size
 
@@ -129,13 +84,26 @@ If you intend to use the `default_id_len`, you can use the constant `nanoid.rng_
 ### Regarding RNGs
 
 You will need to provide an random number generator (rng) yourself. You can use the zig standard library ones, either `std.rand.DefaultPrng`
-or if you have stricter security requirements use `std.rand.DefaultCsprng`.
+or if you have stricter security requirements use `std.rand.DefaultCsprng` or `std.crypto.random`.
 
 When you initialize them you need to provide a seed, providing the same one every time will result in the same ids being generated every 
-time you run the program.
+time you run the program, except for `std.crypto.random`.
 
-If you want a good secure seed you can generate one using `std.crypto.random.bytes`. Refer to the examples at the start of this readme for 
-usage.
+If you want a good secure seed you can generate one using `std.crypto.random.bytes`. 
+
+Here is an example of how you would initialize and seed `std.rand.DefaultCsprng` and use it:
+
+```zig
+// Generate seed
+var seed: [std.rand.DefaultCsprng.secret_seed_length]u8 = undefined;
+std.crypto.random.bytes(&seed);
+
+// Initialize the rng and allocator
+var rng = std.rand.DefaultCsprng.init(seed);
+
+// Generate id
+var id = nanoid.generate(rng.random());
+```
 
 ## Add zig-nanoid to your project
 

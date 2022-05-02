@@ -217,85 +217,33 @@ pub fn generateExWithIterativeRng(rng: std.rand.Random, alphabet: []const u8, re
     return result_buffer;
 }
 
-/// Generates a nanoid using the provided alphabet inside `result_buffer` and returns it back to the caller.
+/// Generates a nanoid using the provided alphabet.
 ///
 /// Parameters:
+///
 /// - `rng`: a random number generator. 
 ///    Provide a secure one such as `std.rand.DefaultCsprng` and seed it properly if you have security concerns. 
-///    See `Regarding RNGs` in `readme.md` for more information.
+///    See `Regarding RNGs` in `README.md` for more information.
 ///
 /// - `alphabet`: an array of the bytes that will be used in the id, its length must be in the range `(0, max_alphabet_len]`.
-///    Consider the options from `nanoid.alphabets`.
-///
-/// - `result_buffer` is an output buffer that will be filled *completely* with random bytes from `alphabet`, thus generating an id of 
-///    length `result_buffer.len`. This buffer will be returned at the end of the function.
-pub fn generateWithAlphabetToBuffer(rng: std.rand.Random, alphabet: []const u8, result_buffer: []u8) []u8
+pub fn generateWithAlphabet(rng: std.rand.Random, alphabet: []const u8) [default_id_len]u8
 {
-    // Make a step buffer
-    var rng_step_buffer: [rng_step_buffer_len_sufficient_for_default_length_ids]u8 = undefined;
-
-    // Generate the id
-    const result = generateEx(rng, alphabet, result_buffer, &rng_step_buffer);
-    return result;
+    var nanoid: [default_id_len]u8 = undefined;
+    var step_buffer: [rng_step_buffer_len_sufficient_for_default_length_ids]u8 = undefined;
+    _ = generateEx(rng, alphabet, &nanoid, &step_buffer);
+    return nanoid;
 }
 
-/// Generates a nanoid using the provided alphabet in a newly allocated buffer and returns it back to the caller.
+/// Generates a nanoid using the default alphabet.
 ///
 /// Parameters:
-/// - `allocator`: is the allocator used to allocate the resulting buffer which gets returned to the user. 
-///    The user must manage the resulting allocation.
 ///
 /// - `rng`: a random number generator. 
 ///    Provide a secure one such as `std.rand.DefaultCsprng` and seed it properly if you have security concerns. 
-///    See `Regarding RNGs` in `readme.md` for more information.
-///
-/// - `alphabet`: an array of the bytes that will be used in the id, its length must be in the range `(0, max_alphabet_len]`.
-pub fn generateWithAlphabet(allocator: std.mem.Allocator, rng: std.rand.Random, alphabet: []const u8) std.mem.Allocator.Error![]u8
+///    See `Regarding RNGs` in `README.md` for more information.
+pub fn generate(rng: std.rand.Random) [default_id_len]u8
 {
-    // Allocate result buffer
-    const result_buffer = try allocator.alloc(u8, default_id_len);
-    errdefer allocator.free(result_buffer);
-
-    // Generate the id
-    const result = generateWithAlphabetToBuffer(rng, alphabet, result_buffer);
-    return result;
-}
-
-/// Generates a nanoid of default length using the default alphabet inside `result_buffer` and returns it back to the caller.
-///
-/// Parameters:
-/// - `rng`: a random number generator. 
-///    Provide a secure one such as `std.rand.DefaultCsprng` and seed it properly if you have security concerns. 
-///    See `Regarding RNGs` in `readme.md` for more information.
-///
-/// - `alphabet`: an array of the bytes that will be used in the id, its length must be in the range `(0, max_alphabet_len]`.
-///
-/// - `result_buffer` is an output buffer that will be filled *completely* with random bytes from `alphabet`, thus generating an id of 
-///    length `result_buffer.len`. This buffer will be returned at the end of the function.
-pub fn generateDefaultToBuffer(rng: std.rand.Random, result_buffer: []u8) []u8
-{
-    var rng_step_buffer: [rng_step_buffer_len_sufficient_for_default_length_ids]u8 = undefined;
-    const result = generateEx(rng, alphabets.default, result_buffer, &rng_step_buffer);
-    return result;
-}
-
-/// Generates a nanoid using the default alphabet in a newly allocated buffer and returns it back to the caller.
-///
-/// Parameters:
-/// - `allocator`: is the allocator used to allocate the resulting buffer which gets returned to the user. 
-///    The user must manage the resulting allocation.
-///
-/// - `rng`: a random number generator. 
-///    Provide a secure one such as `std.rand.DefaultCsprng` and seed it properly if you have security concerns. 
-///    See `Regarding RNGs` in `readme.md` for more information.
-///
-/// - `alphabet`: an array of the bytes that will be used in the id, its length must be in the range `(0, max_alphabet_len]`.
-pub fn generateDefault(allocator: std.mem.Allocator, rng: std.rand.Random) std.mem.Allocator.Error![]u8
-{
-    const result_buffer = try allocator.alloc(u8, default_id_len);
-    errdefer allocator.free(result_buffer);
-
-    const result = generateDefaultToBuffer(rng, result_buffer);
+    const result = generateWithAlphabet(rng, alphabets.default);
     return result;
 }
 
@@ -338,7 +286,7 @@ const internal_utils = struct
     }
 
     /// Checks if all elements in `array` are present in `includedIn`.
-    fn allIn(comptime T: type, array: []T, includedIn: []const T) bool 
+    fn allIn(comptime T: type, array: []const T, includedIn: []const T) bool 
     {
         for (array) |it|
         {
@@ -394,15 +342,12 @@ test "calling computeRngStepBufferLength with all acceptable alphabet sizes and 
 
 test "generating an id with default settings"
 {
-    // Init rng and allocator 
+    // Init rng
     var rng = internal_utils.makeDefaultCsprng();
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     
     // Generate a nanoid
-    const result = try generateDefault(gpa.allocator(), rng.random());
-    defer gpa.allocator().free(result);
-
-    try std.testing.expect(result.len == default_id_len);
+    const result = generate(rng.random());
+    try std.testing.expect(internal_utils.allIn(u8, &result, alphabets.default));
 }
 
 test "generating an id with a custom length"
@@ -424,42 +369,39 @@ test "generating an id with a custom length"
 
 test "generating an id with a custom alphabet"
 {
-    // Initialize the rng and allocator
+    // Initialize the rng
     var rng = internal_utils.makeDefaultCsprng();
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     
     // Generate a nanoid
     const custom_alphabet = "1234abcd";
-    const result = try generateWithAlphabet(gpa.allocator(), rng.random(), custom_alphabet);
+    const result = generateWithAlphabet(rng.random(), custom_alphabet);
 
-    try std.testing.expect(result.len == default_id_len);
-    try std.testing.expect(internal_utils.allIn(u8, result, custom_alphabet));
+    try std.testing.expect(internal_utils.allIn(u8, &result, custom_alphabet));
 }
 
 test "generating an id for all alphabets"
 {
     var rng = internal_utils.makeDefaultCsprng();
-    var result_buffer: [default_id_len]u8 = undefined;
     
     for (all_alphabets) |alphabet|
     {
-        const result = try generateWithAlphabetToBuffer(rng.random(), alphabet, &result_buffer);
+        const result = generateWithAlphabet(rng.random(), alphabet);
 
-        try std.testing.expect(result.len == default_id_len);
-        try std.testing.expect(internal_utils.allIn(u8, result, alphabet));
+        try std.testing.expect(internal_utils.allIn(u8, &result, alphabet));
     }
 }
 
 test "generating an id with a custom alphabet and length"
 {
-    // Initialize the rng and allocator
+    // Initialize the rng
     var rng = internal_utils.makeDefaultCsprng();
     
     // Generate a nanoid
     const custom_alphabet = "1234abcd";
     const custom_id_len = 7;
     var result_buffer: [custom_id_len]u8 = undefined;
-    const result = generateWithAlphabetToBuffer(rng.random(), custom_alphabet, &result_buffer);
+    var step_buffer: [computeSufficientRngStepBufferLengthFor(custom_id_len)]u8 = undefined;
+    const result = generateEx(rng.random(), custom_alphabet, &result_buffer, &step_buffer);
 
     try std.testing.expect(result.len == custom_id_len);
     
@@ -478,7 +420,8 @@ test "generating an id with a single letter alphabet"
     const custom_alphabet = "a";
     const custom_id_len = 5;
     var result_buffer: [custom_id_len]u8 = undefined;
-    const result = generateWithAlphabetToBuffer(rng.random(), custom_alphabet, &result_buffer);
+    var step_buffer: [computeSufficientRngStepBufferLengthFor(custom_id_len)]u8 = undefined;
+    const result = generateEx(rng.random(), custom_alphabet, &result_buffer, &step_buffer);
 
     try std.testing.expect(std.mem.eql(u8, "aaaaa", result));
 }
@@ -500,8 +443,7 @@ test "flat distribution of generated ids"
     var i: usize = 0;
     while (i < number_of_ids_to_generate) : (i += 1)
     {
-        var id_buffer: [default_id_len]u8 = undefined;
-        const id = generateDefaultToBuffer(rng.random(), &id_buffer);
+        const id = generate(rng.random());
 
         // Count the occurence of every character across all generated ids
         for (id) |char|
@@ -577,35 +519,29 @@ test "flat distribution of generated ids with the iterative method"
 
 test "generating an id with a constant seed to prng"
 {
-    // Init rng and allocator 
+    // Init rng
     var rng = internal_utils.makeDefaultPrngWithConstantSeed();
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    defer _ = gpa.deinit();
     
     // Generate a nanoid
-    const result = try generateDefault(gpa.allocator(), rng.random());
-    defer gpa.allocator().free(result);
+    const result = generate(rng.random());
 
-    try std.testing.expectEqualStrings(result, "x9l5_XofdoYVaZ0J2ob30");
+    try std.testing.expectEqualStrings(&result, "x9l5_XofdoYVaZ0J2ob30");
 }
 
 test "generating an id with a constant seed to csprng"
 {
-    // Init rng and allocator 
+    // Init rng
     var rng = internal_utils.makeDefaultCsprngWithConstantSeed();
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    defer _ = gpa.deinit();
     
     // Generate a nanoid
-    const result = try generateDefault(gpa.allocator(), rng.random());
-    defer gpa.allocator().free(result);
+    const result = generate(rng.random());
 
-    try std.testing.expectEqualStrings(result, "WGAM32wiVYs19fgttw6lM");
+    try std.testing.expectEqualStrings(&result, "WGAM32wiVYs19fgttw6lM");
 }
 
 test "generating an id with a constant seed to prng iterative"
 {
-    // Init rng and allocator 
+    // Init rng
     var rng = internal_utils.makeDefaultPrngWithConstantSeed();
     
     // Generate a nanoid
@@ -617,7 +553,7 @@ test "generating an id with a constant seed to prng iterative"
 
 test "generating an id with a constant seed to csprng iterative"
 {
-    // Init rng and allocator 
+    // Init rng 
     var rng = internal_utils.makeDefaultCsprngWithConstantSeed();
     
     // Generate a nanoid

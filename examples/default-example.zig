@@ -3,19 +3,7 @@ const nanoid = @import("nanoid");
 
 pub fn main() !void
 {   
-    // Generate seed
-    var seed: [std.rand.DefaultCsprng.secret_seed_length]u8 = undefined;
-    std.crypto.random.bytes(&seed);
-
-    // Initialize the rng and allocator
-    var rng = std.rand.DefaultCsprng.init(seed);
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    defer _ = gpa.deinit();
+    const result = nanoid.generate(std.crypto.random);
     
-    // Generate a nanoid
-    const result = try nanoid.generateDefault(gpa.allocator(), rng.random());
-    defer gpa.allocator().free(result);
-
-    // Print it at the end
     std.log.info("Nanoid: {s}", .{result});
 }
