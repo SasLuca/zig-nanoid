@@ -61,7 +61,7 @@ pub fn getPackage(name: []const u8) std.build.Pkg
 {
     return std.build.Pkg{
         .name = name,
-        .path = .{ .path = std.fs.path.dirname(@src().file).? ++ "/src/nanoid.zig" },
+        .source = .{ .path = std.fs.path.dirname(@src().file).? ++ "/src/nanoid.zig" },
         .dependencies = null, // null by default, but can be set to a slice of `std.build.Pkg`s that your package depends on.
     };
 }
