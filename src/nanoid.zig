@@ -516,27 +516,3 @@ test "flat distribution of generated ids with the iterative method"
         try std.testing.expect(internal_utils.toBeCloseTo(distribution, 1, 1));
     }
 }
-
-test "generating an id with a constant seed to prng iterative"
-{
-    // Init rng
-    var rng = internal_utils.makeDefaultPrngWithConstantSeed();
-    
-    // Generate a nanoid
-    var result_buffer: [default_id_len]u8 = undefined;
-    const result = generateExWithIterativeRng(rng.random(), alphabets.default, &result_buffer);
-
-    try std.testing.expectEqualStrings(result, "5ookuCml5jZyphCDT0R4s");
-}
-
-test "generating an id with a constant seed to csprng iterative"
-{
-    // Init rng 
-    var rng = internal_utils.makeDefaultCsprngWithConstantSeed();
-    
-    // Generate a nanoid
-    var result_buffer: [default_id_len]u8 = undefined;
-    const result = generateExWithIterativeRng(rng.random(), alphabets.default, &result_buffer);
-
-    try std.testing.expectEqualStrings(result, "WOo_Gi5-2dtC__isbnp67");
-}
