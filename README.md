@@ -107,6 +107,32 @@ var id = nanoid.generate(rng.random());
 
 ## Add zig-nanoid to your project
 
+### Manually
+
+To add the library as a package to your zig project:
+1. Download the repo and put it in a folder (eg: `thirdparty`) in your project.
+2. Import the library's `build.zig` in your build script (eg: `const nanoid = @import("thirdparty/nanoid-zig/build.zig");`)
+3. Add the library as a package to your steps (eg: `exe.addPackage(nanoid.getPackage("nanoid"));`)
+
+Full example:
+```zig
+// build.zig
+const std = @import("std");
+const nanoid = @import("thirdparty/zig-nanoid/build.zig");
+
+pub fn build(b: *std.build.Builder) void 
+{
+    const target = b.standardTargetOptions(.{});
+    const mode = b.standardReleaseOptions();
+
+    const exe = b.addExecutable("zig-nanoid-test", "src/main.zig");
+    exe.setTarget(target);
+    exe.setBuildMode(mode);
+    exe.addPackage(nanoid.getPackage("nanoid"));
+    exe.install();
+}
+```
+
 ### Using the gyro package manager
 
 We support the zig [gyro package manager](https://github.com/mattnite/gyro).
@@ -123,31 +149,6 @@ Here is how to use it:
 3. Import `const nanoid = @import("nanoid");` in your `main.zig` and use it.
 
 4. Invoke `gyro build run` which will generate `deps.zig` and other files as well as building and running your project.
-
-### Manually
-
-To add the library as a package to your zig project:
-1. Download the repo and put it in a folder (eg: `thirdparty`) in your project.
-2. Import the library `build.zig` like so: `const nanoid = @import("thirdparty/nanoid-zig/build.zig");`
-3. Add the library as a package like so: `exe.addPackage(nanoid.getPackage("nanoid"));`
-
-Full example:
-```zig
-const std = @import("std");
-const nanoid = @import("thirdparty/zig-nanoid/build.zig");
-
-pub fn build(b: *std.build.Builder) void 
-{
-    const target = b.standardTargetOptions(.{});
-    const mode = b.standardReleaseOptions();
-
-    const exe = b.addExecutable("zig-nanoid-test", "src/main.zig");
-    exe.setTarget(target);
-    exe.setBuildMode(mode);
-    exe.addPackage(nanoid.getPackage("nanoid"));
-    exe.install();
-}
-```
 
 ## Useful links
 
