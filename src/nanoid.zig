@@ -58,7 +58,7 @@ pub fn computeMask(alphabet_len: u8) u8
 {
     std.debug.assert(alphabet_len > 0);
 
-    const clz: u5 = @clz(u31, (alphabet_len - 1) | 1);
+    const clz: u5 = @clz(@as(u31, (alphabet_len - 1) | 1));
     const mask = (@as(u32, 2) << (31 - clz)) - 1;
     const result = @truncate(u8, mask);
     return result;
